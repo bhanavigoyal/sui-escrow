@@ -2,6 +2,7 @@ import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from "@
 import { SuiObjectResponse } from "@mysten/sui/client";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Transaction } from '@mysten/sui/transactions';
+import { mintToken } from "../utils/mint";
 
 type NftContextType = {
     nfts: SuiObjectResponse[];
@@ -21,37 +22,19 @@ export function NftProvider({children}:{
 
     const client = useSuiClient();
 
-    type NftDetailsType = {
-        name: string;
-        description:string;
-        image_url:string
-    }
-
-    async function executeNftMint(nftMetadata: NftDetailsType) {
-        
-        const tx = new Transaction();
-
-        tx.moveCall({ 
-            target: '0x2::devnet_nft::mint', 
-            arguments: [
-                tx.pure.string(nftMetadata.name), 
-                tx.pure.string(nftMetadata.description), 
-                tx.pure.string(nftMetadata.image_url)
-        ] })
-
-        signAndExecuteTransaction({
-            transaction: tx
-        },
-        {
-            onError: (err) => { return err},
-            onSuccess: (result) => { return result},
-        })
-    }
 
     async function mintNfts(){
         if (!currentAccount?.address) return;
 
         setLoading(true);
+
+        const balance = await client.getBalance({
+            owner: currentAccount.address,
+        });
+
+        if (balance.totalBalance < "1000000000"){
+            await mintToken(currentAccount.address)
+        }
 
         const nftDetails = {
             nftNames: ["NFT 1", "NFT 2", "NFT 3", "NFT 4", "NFT 5"],
@@ -66,9 +49,24 @@ export function NftProvider({children}:{
                     description: nftDetails.nftDescriptions[i],
                     image_url: nftDetails.nftUrls[i]
                 }
-                const response = await executeNftMint(nftMetadata);
 
-                console.log(response);
+                const tx = new Transaction();
+
+                tx.moveCall({ 
+                    target: '0x2::devnet_nft::mint', 
+                    arguments: [
+                        tx.pure.string(nftMetadata.name), 
+                        tx.pure.string(nftMetadata.description), 
+                        tx.pure.string(nftMetadata.image_url)
+                ] })
+
+                signAndExecuteTransaction({
+                    transaction: tx
+                },
+                {
+                    onError: (err) => { return err},
+                    onSuccess: (result) => { return result},
+                })
                 
             }
         }catch(e){
