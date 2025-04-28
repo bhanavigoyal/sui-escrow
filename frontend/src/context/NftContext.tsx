@@ -37,13 +37,13 @@ export function NftProvider({children}:{
         }
 
         const nftDetails = {
-            nftNames: ["NFT 1", "NFT 2", "NFT 3", "NFT 4", "NFT 5"],
-            nftDescriptions: ["Description 1", "Description 2", "Description 3", "Description 4", "Description 5"],
-            nftUrls: ["url1", "url2", "url3", "url4", "url5"]
+            nftNames: ['NFT 1', "NFT 2", "NFT 3", "NFT 4", "NFT 5"],
+            nftDescriptions: ['Description 1', "Description 2", "Description 3", "Description 4", "Description 5"],
+            nftUrls: ['https://arweave.net/QW9doLmmWdQ-7t8GZ85HtY8yzutoir8lGEJP9zOPQqA', "", "", "", ""]
         };
         
         try{
-            for(let i=1; i<=5; i++){
+            for(let i=0; i<1; i++){
                 const nftMetadata = {
                     name: nftDetails.nftNames[i],
                     description: nftDetails.nftDescriptions[i],
@@ -52,7 +52,7 @@ export function NftProvider({children}:{
 
                 const tx = new Transaction();
 
-                tx.moveCall({ 
+                const response = await tx.moveCall({ 
                     target: '0x2::devnet_nft::mint', 
                     arguments: [
                         tx.pure.string(nftMetadata.name), 
@@ -60,13 +60,18 @@ export function NftProvider({children}:{
                         tx.pure.string(nftMetadata.image_url)
                 ] })
 
-                signAndExecuteTransaction({
+                console.log("response of movecall: ", response);
+
+                tx.setGasBudget(1000000);
+
+                await signAndExecuteTransaction({
                     transaction: tx
                 },
                 {
-                    onError: (err) => { return err},
-                    onSuccess: (result) => { return result},
+                    onError: (err) => { console.error("transaction error",err)},
+                    onSuccess: (result) => {console.log("transaction success: ",result) },
                 })
+
                 
             }
         }catch(e){
@@ -74,29 +79,48 @@ export function NftProvider({children}:{
         }
     }
 
+    async function getObjects(){
+        if(!currentAccount?.address) return [];
+        
+        const objects = await client.getOwnedObjects({
+            owner: currentAccount.address,
+            options: {
+                showType:true,
+                showContent:true
+            }
+        });
+
+        const nftObjects = objects.data.filter((obj)=>(
+            obj.data?.type?.includes("TestnetNFT")
+        ));
+
+
+
+        return nftObjects;
+    }
+
 
     useEffect(()=>{
         async function fetchNft(){
-            if(!currentAccount?.address) return;
+            if (!currentAccount?.address) return;
+
             setLoading(true);
 
-            const objects = await client.getOwnedObjects({
-                owner: currentAccount.address,
-                options: {
-                    showType:true,
-                    showContent:true
-                }
-            });
+            const nftObjects = await getObjects()
 
-            const nftObjects = objects.data.filter((obj)=>(
-                obj.data?.type?.includes("TestnetNFT")
-            ));
+            if (nftObjects.length===0){
+                console.log("nfts not found")
+                await mintNfts();
 
-            if (nftObjects.length==0){
-                mintNfts();
+                const mintedNfts = await getObjects();
+                setNfts(mintedNfts)
+            }else{
+                console.log("nfts found");
+                setNfts(nftObjects);
             }
 
-            setNfts(nftObjects);
+                
+            console.log(nftObjects);
             setLoading(false)
 
         }
