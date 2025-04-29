@@ -9,9 +9,9 @@ export const CreateEscrow=()=>{
             <img className="w-60 h-60" src="public/contract.svg" alt="" />
             <div className="pt-6">
                 {/* add the feature to go to locking assets on click here */}
-                <Details label="1. 🔒 Lock your asset" text="Secure your NFT or token first. (Don't worry, it's still yours!)"/>
-                <Details label="2. ✍️ Fill in the details" text="Enter who you're trading with and what you're offering."/>
-                <Details label="3. 📦 Create the escrow" text="Your asset is safely stored, waiting for the swap."/>
+                <Details label="1. 📦 Start a Trade" text="Pick the NFT or token you want to offer and set up the trade."/>
+                <Details label="👤 Choose Who to Trade With" text="Enter the wallet address of the person you want to swap with."/>
+                <Details label="3. 🔒 They Lock Their Asset" text="The other person locks their item and sends you the key."/>
                 <Details label="4. 🚀 Swap and complete" text="The other person accepts and the trade finishes automatically!"/>
             </div>
         </div>
