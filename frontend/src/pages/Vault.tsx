@@ -10,6 +10,7 @@ type NFTFields = {
 	url: string;
 };
 
+
 export const Vault=()=>{
     const nftContext = useNft();
     if(!nftContext) return <div>loading</div>
@@ -48,15 +49,23 @@ export const Vault=()=>{
             {unlockedNfts.map((nft, index)=>{
                 if (nft.data?.content?.dataType === "moveObject"){
                     const fields = nft.data.content.fields as NFTFields;
-                    return <NftCard type="unlocked" key={index} objectId={nft.data.objectId} name={fields.name} description={fields.description} url={fields.url}/>
+                    return <NftCard type="unlocked" mapKey={index} objectId={nft.data.objectId} name={fields.name} description={fields.description} url={fields.url}/>
                 }
                 return null;
             })}
 
             {lockedNfts.map((nft, index)=>{
                 if (nft.data?.content?.dataType === "moveObject"){
-                    const fields = nft.data.content.fields as NFTFields;
-                    return <NftCard type="locked" key={index} objectId={nft.data.objectId} name={fields.name} description={fields.description} url={fields.url}/>
+                    const lockedFields = nft.data.content.fields as {
+                        obj:{
+                            fields: NFTFields;
+                        }
+                        key:string
+                    };
+
+                    const objFields = lockedFields.obj.fields
+
+                    return <NftCard type="locked" mapKey={index} keyObjId={lockedFields.key} objectId={nft.data.objectId} name={objFields.name} description={objFields.description} url={objFields.url}/>
                 }
                 return null;
             })}

@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useLock } from "../utils/lock"
 import { Button } from "./Button"
 
-export const NftCard=({key, objectId, name, description, url, type}:{
-    key: number,
+export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}:{
+    mapKey: number,
+    keyObjId?:string,
     objectId:string,
     name:string,
     description:string,
@@ -25,20 +26,25 @@ export const NftCard=({key, objectId, name, description, url, type}:{
     }
 
     const handleCopy = ()=>{
-        if (keyId) {
+        if (keyObjId) {
+            navigator.clipboard.writeText(keyObjId);
+            //toast success copied key
+        }
+
+        if(keyId){
             navigator.clipboard.writeText(keyId);
-            alert("copied")
+            //toast success copied key
         }
     }
 
-    return <div key={key} className="bg-neutral-700 w-72 h-72 flex flex-col border border-neutral-400 rounded-xl p-3 items-center ">
+    return <div key={mapKey} className="bg-neutral-700 w-72 flex flex-col border border-neutral-400 rounded-xl p-3 items-center ">
         <div className="font-bold">
             {name}
         </div>
         <div className="text-xs">
             {description}
         </div>
-        <img className="p-5" src={url} alt={name} />
+        <img className="p-3 w-40 h-40" src={url} alt={name} />
         <div className="text-xs">
             {(type==="unlocked")?(
                 <Button label="🔒 Lock this NFT" onClick={handleLock}/>
