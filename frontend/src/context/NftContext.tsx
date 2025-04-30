@@ -5,7 +5,8 @@ import { Transaction } from '@mysten/sui/transactions';
 import { mintToken } from "../utils/mint";
 
 type NftContextType = {
-    nfts: SuiObjectResponse[];
+    unlockedNfts: SuiObjectResponse[];
+    lockedNfts: SuiObjectResponse[];
     loading: boolean;
 };
 
@@ -17,7 +18,8 @@ export function NftProvider({children}:{
     const currentAccount= useCurrentAccount();
     const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
-    const [nfts, setNfts] = useState<SuiObjectResponse[]>([]);
+    const [unlockedNfts, setUnlockedNfts] = useState<SuiObjectResponse[]>([]);
+    const [lockedNfts, setLockedNfts] = useState<SuiObjectResponse[]>([]);
     const [loading, setLoading] = useState(false);
 
     const client = useSuiClient();
@@ -43,7 +45,7 @@ export function NftProvider({children}:{
         };
         
         try{
-            for(let i=0; i<1; i++){
+            for(let i=0; i<5; i++){
                 const nftMetadata = {
                     name: nftDetails.nftNames[i],
                     description: nftDetails.nftDescriptions[i],
@@ -52,17 +54,13 @@ export function NftProvider({children}:{
 
                 const tx = new Transaction();
 
-                const response = await tx.moveCall({ 
-                    target: '0x2::devnet_nft::mint', 
+                tx.moveCall({ 
+                    target: '0xca687af114bdd94fde3df1a2130858e72e72a7e6231f39d4199e49033a859fd5::nft::mint_to_sender', 
                     arguments: [
                         tx.pure.string(nftMetadata.name), 
                         tx.pure.string(nftMetadata.description), 
                         tx.pure.string(nftMetadata.image_url)
                 ] })
-
-                console.log("response of movecall: ", response);
-
-                tx.setGasBudget(1000000);
 
                 await signAndExecuteTransaction({
                     transaction: tx
@@ -80,7 +78,9 @@ export function NftProvider({children}:{
     }
 
     async function getObjects(){
-        if(!currentAccount?.address) return [];
+        if (!currentAccount?.address) {
+            return { unlockedNftObjects: [], lockedNftObjects: [] };
+        }
         
         const objects = await client.getOwnedObjects({
             owner: currentAccount.address,
@@ -90,13 +90,15 @@ export function NftProvider({children}:{
             }
         });
 
-        const nftObjects = objects.data.filter((obj)=>(
-            obj.data?.type?.includes("TestnetNFT")
+        const unlockedNftObjects = objects.data.filter((obj)=>(
+            obj.data?.type === "0xca687af114bdd94fde3df1a2130858e72e72a7e6231f39d4199e49033a859fd5::nft::NFT"
         ));
 
+        const lockedNftObjects = objects.data.filter((obj)=>(
+            obj.data?.type?.startsWith("0xca687af114bdd94fde3df1a2130858e72e72a7e6231f39d4199e49033a859fd5::lock::Locked<")
+        ))
 
-
-        return nftObjects;
+        return {unlockedNftObjects, lockedNftObjects};
     }
 
 
@@ -106,21 +108,22 @@ export function NftProvider({children}:{
 
             setLoading(true);
 
-            const nftObjects = await getObjects()
+            const { unlockedNftObjects, lockedNftObjects } = await getObjects()
 
-            if (nftObjects.length===0){
-                console.log("nfts not found")
+            if (unlockedNftObjects.length===0 && lockedNftObjects.length ===0){
+                console.log("nfts not found initial call now minting nfts")
                 await mintNfts();
 
                 const mintedNfts = await getObjects();
-                setNfts(mintedNfts)
+                setUnlockedNfts(mintedNfts.unlockedNftObjects);
+                setLockedNfts(mintedNfts.lockedNftObjects);
             }else{
-                console.log("nfts found");
-                setNfts(nftObjects);
+                await mintNfts();
+                console.log("nfts found without minting");
+                setUnlockedNfts(unlockedNftObjects);
+                setLockedNfts(lockedNftObjects);
             }
 
-                
-            console.log(nftObjects);
             setLoading(false)
 
         }
@@ -129,7 +132,7 @@ export function NftProvider({children}:{
     },[currentAccount])
 
     return (
-        <NftContext.Provider value={{nfts,loading}}>
+        <NftContext.Provider value={{unlockedNfts, lockedNfts ,loading}}>
             {children}
         </NftContext.Provider>
     )

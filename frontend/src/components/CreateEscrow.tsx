@@ -6,7 +6,7 @@ import { InputBox } from "./InputBox"
 export const CreateEscrow=()=>{
     return <div className="bg-neutral-700 rounded-3xl items-center grid grid-cols-2 place-items-center">
         <div className="p-5 flex flex-col items-center">
-            <img className="w-60 h-60" src="public/contract.svg" alt="" />
+            <img className="w-60 h-60" src="/contract.svg" alt="" />
             <div className="pt-6">
                 {/* add the feature to go to locking assets on click here */}
                 <Details label="1. 📦 Start a Trade" text="Pick the NFT or token you want to offer and set up the trade."/>

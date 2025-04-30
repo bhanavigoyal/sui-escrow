@@ -1,41 +1,66 @@
 import { AppBar } from "../components/AppBar"
+import { NftCard } from "../components/NftCard";
 import { useNft } from "../context/NftContext"
 import { useEffect } from "react";
+
+
+type NFTFields = {
+	name: string;
+	description: string;
+	url: string;
+};
 
 export const Vault=()=>{
     const nftContext = useNft();
     if(!nftContext) return <div>loading</div>
 
-    const {nfts, loading} = nftContext;
+    const {unlockedNfts, lockedNfts, loading} = nftContext;
 
     if (loading) return <div>loading</div>
     
 
     useEffect(()=>{
-        if (nfts.length===0){
-            console.log("no nft")
+        if (unlockedNfts.length===0 && lockedNfts.length===0){
+            console.log("no nft in the vault")
         }
         else{
-            console.log("found nfts")
-            console.log(nfts)
+            console.log("found nfts in the vault")
+            console.log(unlockedNfts)
+            console.log(lockedNfts)
         }
         
-        nfts.forEach((nft, index) => {
+        unlockedNfts.forEach((nft, index) => {
             console.log(`NFT ${index}: `, nft);
-            console.log(`NFT Digest: ${nft.data?.digest}`);
+            console.log(`Unlocked NFT Digest: ${nft.data?.digest}`);
+            console.log(JSON.stringify(nft))
+        });
+        lockedNfts.forEach((nft, index) => {
+            console.log(`NFT ${index}: `, nft);
+            console.log(`locked NFT Digest: ${nft.data?.digest}`);
+            console.log(JSON.stringify(nft))
         });
 
-    },[nfts])
+    },[unlockedNfts, lockedNfts])
 
-    return <div>
+    return <div className="bg-neutral-900">
         <AppBar/>
+        <div className="p-5 grid grid-cols-4 gap-5 auto-rows-fr">
+            {unlockedNfts.map((nft, index)=>{
+                if (nft.data?.content?.dataType === "moveObject"){
+                    const fields = nft.data.content.fields as NFTFields;
+                    return <NftCard type="unlocked" key={index} objectId={nft.data.objectId} name={fields.name} description={fields.description} url={fields.url}/>
+                }
+                return null;
+            })}
 
-        <div>
-            {nfts.map((nft)=>(
-                <div>{nft.data?.digest}</div>
-            ))}
+            {lockedNfts.map((nft, index)=>{
+                if (nft.data?.content?.dataType === "moveObject"){
+                    const fields = nft.data.content.fields as NFTFields;
+                    return <NftCard type="locked" key={index} objectId={nft.data.objectId} name={fields.name} description={fields.description} url={fields.url}/>
+                }
+                return null;
+            })}
         </div>
-    </div>
-
+        </div>
 
 }
