@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLock } from "../utils/lock"
 import { Button } from "./Button"
+import { useUnlock } from "../utils/unlock";
 
 export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}:{
     mapKey: number,
@@ -13,6 +14,7 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
 })=>{
 
     const {lock} = useLock();
+    const {unlock} = useUnlock();
 
     const [keyId, setKeyId] = useState<string|null|undefined>("");
 
@@ -20,6 +22,18 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
         try {
             const result = await lock(objectId);
             setKeyId(result?.keyId);
+        }catch(e){
+            console.log(e)
+        }
+    }
+
+    const handleUnlock = async()=>{
+        try{
+            if(!keyObjId){
+                return;
+            }
+            const result = await unlock(objectId,keyObjId);
+            console.log(result)
         }catch(e){
             console.log(e)
         }
@@ -46,14 +60,15 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
         </div>
         <img className="p-3 w-40 h-40" src={url} alt={name} />
         <div className="text-xs">
-            {(type==="unlocked")?(
-                <Button label="🔒 Lock this NFT" onClick={handleLock}/>
-            ):(
+            {(type === "locked")?(
                 <div className="flex w-64 space-x-1">
-                    <Button label="🔐 Unlock"/>
+                    <Button label="🔐 Unlock" onClick={handleUnlock}/>
                     <Button label="🔑 Copy Key" onClick={handleCopy}/>
                 </div>
+            ):(
+                <Button label="🔒 Lock this NFT" onClick={handleLock}/>
             )}
+            
         </div>
     </div>
 }

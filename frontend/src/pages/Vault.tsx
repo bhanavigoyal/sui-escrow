@@ -56,12 +56,15 @@ export const Vault=()=>{
 
             {lockedNfts.map((nft, index)=>{
                 if (nft.data?.content?.dataType === "moveObject"){
+                    console.log("LOCKED DATA TYPE",nft.data.content.type)
+                    console.log("LOCKED object id",nft.data.objectId)
                     const lockedFields = nft.data.content.fields as {
                         obj:{
                             fields: NFTFields;
                         }
                         key:string
                     };
+                    
 
                     const objFields = lockedFields.obj.fields
 
