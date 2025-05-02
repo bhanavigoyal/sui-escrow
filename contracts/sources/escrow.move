@@ -1,6 +1,7 @@
 module contracts::escrow;
 
 use contracts::lock::{Self, Locked, Key};
+use sui::event;
 
 public struct Escrow<T: key+store> has key, store {
     id: UID,
@@ -8,6 +9,12 @@ public struct Escrow<T: key+store> has key, store {
     recipient: address,
     exchange_key: ID,
     escrowed_obj: Option<T>
+}
+
+public struct EscrowCreated has copy, drop, store{
+    id:ID,
+    sender: address,
+    recipient: address
 }
 
 const EMismatchedSenderRecipient: u64 = 0;
@@ -30,6 +37,13 @@ public fun create_escrow<T: key+store>(
         exchange_key,
         escrowed_obj: option::some(escrowed_obj)
     };
+
+    let id = object::id(&escrow);
+    event::emit(EscrowCreated{
+        id,
+        sender:ctx.sender(),
+        recipient,
+    });
 
     transfer::public_share_object(escrow);
 }

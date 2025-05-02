@@ -55,7 +55,7 @@ export function NftProvider({children}:{
                 const tx = new Transaction();
 
                 tx.moveCall({ 
-                    target: '0xca687af114bdd94fde3df1a2130858e72e72a7e6231f39d4199e49033a859fd5::nft::mint_to_sender', 
+                    target: '0x31b818703f625a7521c1a09d95f5cecddbaa0fe163bb83fe84d3105d86d14062::nft::mint_to_sender', 
                     arguments: [
                         tx.pure.string(nftMetadata.name), 
                         tx.pure.string(nftMetadata.description), 
@@ -91,11 +91,11 @@ export function NftProvider({children}:{
         });
 
         const unlockedNftObjects = objects.data.filter((obj)=>(
-            obj.data?.type === "0xca687af114bdd94fde3df1a2130858e72e72a7e6231f39d4199e49033a859fd5::nft::NFT"
+            obj.data?.type === "0x31b818703f625a7521c1a09d95f5cecddbaa0fe163bb83fe84d3105d86d14062::nft::NFT"
         ));
 
         const lockedNftObjects = objects.data.filter((obj)=>(
-            obj.data?.type?.startsWith("0xca687af114bdd94fde3df1a2130858e72e72a7e6231f39d4199e49033a859fd5::lock::Locked<")
+            obj.data?.type?.startsWith("0x31b818703f625a7521c1a09d95f5cecddbaa0fe163bb83fe84d3105d86d14062::lock::Locked<")
         ))
 
         return {unlockedNftObjects, lockedNftObjects};

@@ -14,8 +14,8 @@ export function useLock(){
         const tx = new Transaction();
     
         const [locked, key]=tx.moveCall({
-            target: '0xca687af114bdd94fde3df1a2130858e72e72a7e6231f39d4199e49033a859fd5::lock::lock',
-            typeArguments:['0xca687af114bdd94fde3df1a2130858e72e72a7e6231f39d4199e49033a859fd5::nft::NFT'],
+            target: '0x31b818703f625a7521c1a09d95f5cecddbaa0fe163bb83fe84d3105d86d14062::lock::lock',
+            typeArguments:['0x31b818703f625a7521c1a09d95f5cecddbaa0fe163bb83fe84d3105d86d14062::nft::NFT'],
             arguments:[tx.object(objectId)]
         })
 
