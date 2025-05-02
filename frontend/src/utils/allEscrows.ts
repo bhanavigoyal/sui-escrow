@@ -2,10 +2,17 @@ import { useCurrentAccount, useSuiClient } from "@mysten/dapp-kit";
 import { SuiObjectResponse } from "@mysten/sui/client";
 import { useCallback } from "react";
 
+type NFTFields = {
+	name: string;
+	description: string;
+	url: string;
+}
+
 type EscrowFields = {
 	sender: string;
 	recipient: string;
 	exchange_key: string;
+	escrowObj: NFTFields
 };
 
 type EscrowCreatedEvent = {
