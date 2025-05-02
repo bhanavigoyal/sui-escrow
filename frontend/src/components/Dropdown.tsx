@@ -1,10 +1,10 @@
-export const Dropdown=({option, key}:{
+export const Dropdown=({option, index, value}:{
     option: string,
-    key: string
+    index: string,
+    value?:string
 })=>{
-    return <div>
-        <option id={key} className="">
+    return <option id={index} className="" value={value}>
             {option}
         </option>
-    </div>
+
 }

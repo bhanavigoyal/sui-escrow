@@ -118,7 +118,7 @@ export function NftProvider({children}:{
                 setUnlockedNfts(mintedNfts.unlockedNftObjects);
                 setLockedNfts(mintedNfts.lockedNftObjects);
             }else{
-                await mintNfts();
+
                 console.log("nfts found without minting");
                 setUnlockedNfts(unlockedNftObjects);
                 setLockedNfts(lockedNftObjects);
