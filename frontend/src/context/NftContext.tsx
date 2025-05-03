@@ -8,6 +8,7 @@ type NftContextType = {
     unlockedNfts: SuiObjectResponse[];
     lockedNfts: SuiObjectResponse[];
     loading: boolean;
+    refreshNfts:()=> Promise<void>;
 };
 
 const NftContext = createContext<NftContextType | null>(null);
@@ -24,6 +25,11 @@ export function NftProvider({children}:{
 
     const client = useSuiClient();
 
+    const refreshNfts=async()=>{
+        const { unlockedNftObjects, lockedNftObjects } = await getObjects();
+        setUnlockedNfts(unlockedNftObjects);
+        setLockedNfts(lockedNftObjects);
+    }
 
     async function mintNfts(){
         if (!currentAccount?.address) return;
@@ -132,7 +138,7 @@ export function NftProvider({children}:{
     },[currentAccount])
 
     return (
-        <NftContext.Provider value={{unlockedNfts, lockedNfts ,loading}}>
+        <NftContext.Provider value={{unlockedNfts, lockedNfts ,loading, refreshNfts}}>
             {children}
         </NftContext.Provider>
     )

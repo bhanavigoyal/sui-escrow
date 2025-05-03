@@ -1,3 +1,4 @@
+import { useNft } from "../context/NftContext";
 import { useCancel } from "../utils/cancel";
 import { useSwap } from "../utils/swap";
 import { Button } from "./Button";
@@ -12,9 +13,13 @@ export const EscrowCard=({mapKey,exchangeKey, name, url, sender, recipient, type
     objectId:string,
     exchangeKey?:string
 })=>{
+    const nftContext = useNft();
+    if (!nftContext) return;
+    const { refreshNfts } = nftContext;
 
     const {cancel} = useCancel();
     const {swap} = useSwap();
+
 
     function shortenAddress(address: string): string {
         if (!address) return "";
@@ -26,6 +31,7 @@ export const EscrowCard=({mapKey,exchangeKey, name, url, sender, recipient, type
         try{
             const result = await cancel(objectId);
             console.log(result)
+            await refreshNfts();
         }catch(e){
             console.error("error while canceling: ",e)
         }
@@ -36,6 +42,7 @@ export const EscrowCard=({mapKey,exchangeKey, name, url, sender, recipient, type
             if(exchangeKey){
                 const result = await swap(objectId,exchangeKey);
                 console.log(result)
+                await refreshNfts();
             }
             console.log("no key")
         }catch(e){

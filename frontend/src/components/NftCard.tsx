@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLock } from "../utils/lock"
 import { Button } from "./Button"
 import { useUnlock } from "../utils/unlock";
+import { useNft } from "../context/NftContext";
 
 export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}:{
     mapKey: number,
@@ -12,9 +13,12 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
     url:string,
     type:string
 })=>{
+    const nftContext = useNft();
+    if (!nftContext) return;
 
     const {lock} = useLock();
     const {unlock} = useUnlock();
+    const { refreshNfts } = nftContext;
 
     const [keyId, setKeyId] = useState<string|null|undefined>("");
 
@@ -22,6 +26,7 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
         try {
             const result = await lock(objectId);
             setKeyId(result?.keyId);
+            await refreshNfts();
         }catch(e){
             console.log(e)
         }
@@ -34,6 +39,7 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
             }
             const result = await unlock(objectId,keyObjId);
             console.log(result)
+            await refreshNfts();
         }catch(e){
             console.log(e)
         }

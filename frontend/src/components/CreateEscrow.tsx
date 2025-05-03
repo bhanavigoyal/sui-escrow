@@ -5,10 +5,15 @@ import { Details } from "./Details"
 import { Dropdown } from "./Dropdown"
 import { InputBox } from "./InputBox"
 import { useUnlockedNfts } from "../utils/unlockedNfts"
+import { useNft } from "../context/NftContext"
 
 export const CreateEscrow=()=>{
 
     const {escrow} = useEscrow();
+
+    const nftContext = useNft();
+    if (!nftContext) return;
+    const { refreshNfts } = nftContext;
 
     const [address, setAddress]  = useState("");
     const [exchangeKey, setExchangeKey] = useState("");
@@ -20,6 +25,7 @@ export const CreateEscrow=()=>{
     const handleCreateEscrow=async()=>{
         const result = await escrow(objectId,exchangeKey,address);
         console.log(result)
+        await refreshNfts();
     }
 
     const handleDropDownClick=()=>{
