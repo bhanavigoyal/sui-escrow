@@ -2,14 +2,15 @@ import { useCancel } from "../utils/cancel";
 import { useSwap } from "../utils/swap";
 import { Button } from "./Button";
 
-export const EscrowCard=({mapKey, name, url, sender, recipient, type,objectId}:{
+export const EscrowCard=({mapKey,exchangeKey, name, url, sender, recipient, type,objectId}:{
     mapKey:string,
     name:string,
     url:string,
     sender?:string,
     recipient?:string,
     type:string,
-    objectId:string
+    objectId:string,
+    exchangeKey?:string
 })=>{
 
     const {cancel} = useCancel();
@@ -32,10 +33,13 @@ export const EscrowCard=({mapKey, name, url, sender, recipient, type,objectId}:{
 
     const handleSwap=async()=>{
         try{
-            const result = await swap(objectId);
-            console.log(result)
+            if(exchangeKey){
+                const result = await swap(objectId,exchangeKey);
+                console.log(result)
+            }
+            console.log("no key")
         }catch(e){
-            console.error("error while canceling: ",e)
+            console.error("error while swaping: ",e)
         }
     }
     
@@ -45,7 +49,7 @@ export const EscrowCard=({mapKey, name, url, sender, recipient, type,objectId}:{
             </div>
             <img className="p-3 w-40 h-40" src={url} alt={name} />
             <div>
-                {sender && <div className="text-xs space-x-2">
+                {sender && <div className="flex text-xs space-x-2">
                     <div className="font-bold">
                         from:
                     </div>

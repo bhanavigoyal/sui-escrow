@@ -31,12 +31,13 @@ export const Received=()=>{
                         }|null,
                         sender:string,
                         recipient:string,
+                        exchange_key:string
                     };
                     if (!fields.escrowed_obj?.fields) return null;
                     const nft = fields.escrowed_obj.fields;
                     console.log(nft)
                     console.log("nftname:",nft.name)
-                    return <EscrowCard objectId={escrow.data.objectId} type="received" mapKey={index.toString()} name={nft.name} url={nft.url} sender={fields.sender}/>
+                    return <EscrowCard exchangeKey={fields.exchange_key} objectId={escrow.data.objectId} type="received" mapKey={index.toString()} name={nft.name} url={nft.url} sender={fields.sender}/>
                     }
                     return null;
                 })
