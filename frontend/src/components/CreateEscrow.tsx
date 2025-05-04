@@ -69,7 +69,7 @@ export const CreateEscrow=()=>{
                         setObjectId(selected)
                         console.log("object id",selected)
                     }   
-                         } className="w-full bg-neutral-500 p-2 rounded-xl focus:outline-0">
+                         } className="w-full bg-neutral-500 p-2 rounded-xl focus:outline-0 text-xs">
                         {isLoading && <Dropdown option="loading" index="1"/>}
                         {isError && <Dropdown option="error loading" index="1"/>}
                         {nfts?.length ?(

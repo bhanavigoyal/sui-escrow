@@ -1,4 +1,5 @@
 import { AppBar } from "../components/AppBar"
+import { Button } from "../components/Button";
 import { NftCard } from "../components/NftCard";
 import { useNft } from "../context/NftContext"
 import { useEffect } from "react";
@@ -13,12 +14,9 @@ type NFTFields = {
 
 export const Vault=()=>{
     const nftContext = useNft();
-    if(!nftContext) return <div>loading</div>
+    if(!nftContext) return null;
 
-    const {unlockedNfts, lockedNfts, loading} = nftContext;
-
-    if (loading) return <div>loading</div>
-    
+    const {mintNfts, unlockedNfts, lockedNfts, loading} = nftContext;
 
     useEffect(()=>{
         if (unlockedNfts.length===0 && lockedNfts.length===0){
@@ -45,15 +43,33 @@ export const Vault=()=>{
 
     return <div className="bg-neutral-900">
         <AppBar/>
-        <div className="p-5 grid grid-cols-4 gap-5 auto-rows-fr">
-            {unlockedNfts.map((nft, index)=>{
-                if (nft.data?.content?.dataType === "moveObject"){
-                    const fields = nft.data.content.fields as NFTFields;
-                    return <NftCard type="unlocked" mapKey={index} objectId={nft.data.objectId} name={fields.name} description={fields.description} url={fields.url}/>
-                }
-                return null;
-            })}
+        <div className="w-full">
+            <div className="flex relative w-full p-4 justify-end items-center">
+                <div className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold">
+                    MY NFT Collection
+                </div>
+                <div className="">
+                    <Button label="Mint NFTs" onClick={mintNfts} />
+                </div>
+            </div>
+            {loading?(
+                <Loading/>
+            ):(
+                <NFTGrid unlockedNfts={unlockedNfts} lockedNfts={lockedNfts}/>
+            )}
+        </div>
+        </div>
 
+}
+
+const Loading=()=>{
+    return <div>
+        loading...
+    </div>
+}
+
+const NFTGrid=({ unlockedNfts, lockedNfts }: { unlockedNfts: any[]; lockedNfts: any[] })=>{
+    return <div className="p-5 pt-6 grid grid-cols-4 gap-5 auto-rows-fr">
             {lockedNfts.map((nft, index)=>{
                 if (nft.data?.content?.dataType === "moveObject"){
                     console.log("LOCKED DATA TYPE",nft.data.content.type)
@@ -72,7 +88,12 @@ export const Vault=()=>{
                 }
                 return null;
             })}
+            {unlockedNfts.map((nft, index)=>{
+                if (nft.data?.content?.dataType === "moveObject"){
+                    const fields = nft.data.content.fields as NFTFields;
+                    return <NftCard type="unlocked" mapKey={index} objectId={nft.data.objectId} name={fields.name} description={fields.description} url={fields.url}/>
+                }
+                return null;
+            })}
         </div>
-        </div>
-
 }

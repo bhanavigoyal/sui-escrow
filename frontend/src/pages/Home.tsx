@@ -8,6 +8,13 @@ export const Home=()=>{
         <div className="p-5 w-full">
             <CreateEscrow/>
         </div>
-        <Index/>
+        <div>
+            <div className="text-md font-bold">
+                All the active Escrows across the TrustBox
+            </div>
+            <div>
+                <Index/>
+            </div>
+        </div>
     </div>
 }

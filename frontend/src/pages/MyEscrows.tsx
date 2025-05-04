@@ -22,6 +22,14 @@ export const MyEscrows=()=>{
 
     return <div>
         <AppBar/>
+        <div className="flex flex-col space-x-1 items-center p-4">
+            <div className="text-2xl font-bold">
+                MY ESCROWS
+            </div>
+            <div className="text-xs">
+                the escrows made by me
+            </div>
+        </div>
         <div className="p-5 grid grid-cols-4 gap-5 auto-rows-fr">
             { escrows?.map((escrow,index)=>{
                     if(escrow.data?.content?.dataType === "moveObject"){

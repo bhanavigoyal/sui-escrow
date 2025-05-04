@@ -21,6 +21,7 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
     const { refreshNfts } = nftContext;
 
     const [keyId, setKeyId] = useState<string|null|undefined>("");
+    const [isCopied, setIsCopied] = useState(false)
 
     const handleLock= async()=>{
         try {
@@ -48,28 +49,32 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
     const handleCopy = ()=>{
         if (keyObjId) {
             navigator.clipboard.writeText(keyObjId);
-            //toast success copied key
+            setIsCopied(true)
+            setTimeout(() => setIsCopied(false), 2000);
         }
 
         if(keyId){
             navigator.clipboard.writeText(keyId);
-            //toast success copied key
+            setIsCopied(true)
+            setTimeout(() => setIsCopied(false), 2000);
         }
     }
 
-    return <div key={mapKey} className="bg-neutral-700 w-72 flex flex-col border border-neutral-400 rounded-xl p-3 items-center ">
+    
+
+    return <div key={mapKey} className="bg-neutral-700 w-72 flex flex-col border border-neutral-400 rounded-xl p-3 items-center space-y-2 ">
         <div className="font-bold">
             {name}
         </div>
-        <div className="text-xs">
+        <div className="text-xs w-50 text-center">
             {description}
         </div>
-        <img className="p-3 w-40 h-40" src={url} alt={name} />
+        <img className="p-3 h-40" src={url} alt={name} />
         <div className="text-xs">
             {(type === "locked")?(
                 <div className="flex w-64 space-x-1">
                     <Button label="🔐 Unlock" onClick={handleUnlock}/>
-                    <Button label="🔑 Copy Key" onClick={handleCopy}/>
+                    <Button label={isCopied ? "✅ Copied" : "🔑 Copy Key"} onClick={handleCopy}/>
                 </div>
             ):(
                 <Button label="🔒 Lock this NFT" onClick={handleLock}/>
