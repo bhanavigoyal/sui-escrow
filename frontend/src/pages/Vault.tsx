@@ -1,5 +1,6 @@
 import { AppBar } from "../components/AppBar"
 import { Button } from "../components/Button";
+import { Footer } from "../components/Footer";
 import { NftCard } from "../components/NftCard";
 import { useNft } from "../context/NftContext"
 import { useEffect } from "react";
@@ -41,7 +42,7 @@ export const Vault=()=>{
 
     },[unlockedNfts, lockedNfts])
 
-    return <div className="bg-neutral-900">
+    return <div className="min-h-screen flex flex-col bg-neutral-900">
         <AppBar/>
         <div className="w-full">
             <div className="flex relative w-full p-4 justify-end items-center">
@@ -57,6 +58,9 @@ export const Vault=()=>{
             ):(
                 <NFTGrid unlockedNfts={unlockedNfts} lockedNfts={lockedNfts}/>
             )}
+        </div>
+        <div className="mt-auto">
+            <Footer/>
         </div>
         </div>
 

@@ -3,6 +3,7 @@ import { AppBar } from "../components/AppBar"
 import { useAllEscrows } from "../utils/allEscrows";
 import { SuiObjectResponse } from "@mysten/sui/client";
 import { EscrowCard } from "../components/EscrowCard";
+import { Footer } from "../components/Footer";
 
 type NFTFields = {
 	name: string;
@@ -20,9 +21,9 @@ export const Received=()=>{
         })
     },[])
 
-    return <div>
+    return <div className="min-h-screen flex flex-col bg-neutral-900">
         <AppBar/>
-        <div className="flex flex-col space-x-1 items-center p-4">
+        <div className="flex flex-col space-x-1 items-center p-10">
             <div className="text-2xl font-bold">
                 RECIEVED ESCROWS
             </div>
@@ -50,6 +51,9 @@ export const Received=()=>{
                     return null;
                 })
             }
+        </div>
+        <div className="mt-auto">
+            <Footer/>
         </div>
     </div>
 }

@@ -33,8 +33,16 @@ export const AppBar=()=>{
                 Vault
             </div>
         </div>
-        <div>
-            <ConnectButton/>
+        <div className='flex items-center space-x-2'>
+            <div className='flex text-xs border border-amber-200 p-0.5 rounded-sm items-center space-x-0.5'>
+                <div className='rounded-full border-green-200 border h-2 w-2 bg-green-200'></div>
+                <div>
+                    Devnet
+                </div>
+            </div>
+            <div>
+                <ConnectButton/>
+            </div>
         </div>
     </div>
 }

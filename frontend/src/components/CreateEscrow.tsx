@@ -76,8 +76,13 @@ export const CreateEscrow=()=>{
                                 nfts.map((nft,index)=>{
                                     if (nft.data){
                                         const objectId = nft.data.objectId;
-                                        return <Dropdown value={objectId} option={nft.data?.objectId} index={index.toString()}/>
-                                        // return <option id={index.toString()} value={objectId}>{objectId}</option>
+                                        if(nft.data.content?.dataType==="moveObject"){
+                                            const fields = nft.data.content.fields as {
+                                                name:string
+                                            }
+                                            return <Dropdown value={objectId} option={fields.name} index={index.toString()}/>
+                                        }
+                                        
                                     }
                                     return <option>error</option>
                                 })

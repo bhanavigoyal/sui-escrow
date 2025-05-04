@@ -69,7 +69,7 @@ export const NftCard=({mapKey, keyObjId, objectId, name, description, url, type}
         <div className="text-xs w-50 text-center">
             {description}
         </div>
-        <img className="p-3 h-40" src={url} alt={name} />
+        <img className="p-3 w-40 h-40" src={url} alt={name} />
         <div className="text-xs">
             {(type === "locked")?(
                 <div className="flex w-64 space-x-1">

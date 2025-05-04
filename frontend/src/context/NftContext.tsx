@@ -61,6 +61,8 @@ export function NftProvider({ children }: { children: React.ReactNode }) {
         if (!currentAccount?.address) return;
         setLoading(true);
 
+        const dateSuffix = new Date().toISOString().slice(5, 10).replace("-", "");
+
         try {
             const balance = await client.getBalance({ owner: currentAccount.address });
             if (balance.totalBalance < "1000000000") {
@@ -82,12 +84,16 @@ export function NftProvider({ children }: { children: React.ReactNode }) {
             const tx = new Transaction();
 
             for (let i = 0; i < 5; i++) {
+                const name = `${nftDetails.nftNames[i]} #${dateSuffix}${i + 1}`;
+                const description = nftDetails.nftDescriptions[i];
+                const url = nftDetails.nftUrls[i];
+
                 tx.moveCall({
                     target: "0x31b818703f625a7521c1a09d95f5cecddbaa0fe163bb83fe84d3105d86d14062::nft::mint_to_sender",
                     arguments: [
-                        tx.pure.string(nftDetails.nftNames[i]),
-                        tx.pure.string(nftDetails.nftDescriptions[i]),
-                        tx.pure.string(nftDetails.nftUrls[i])
+                        tx.pure.string(name),
+                        tx.pure.string(description),
+                        tx.pure.string(url)
                     ]
                 });
             }

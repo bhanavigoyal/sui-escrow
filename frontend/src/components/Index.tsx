@@ -19,7 +19,7 @@ export const Index=()=>{
             console.log("escrows: ",data);
         });
     },[])
-    return <div className="w-10/12">
+    return <div className="">
         {escrows?.map((escrow,index)=>{
             if(escrow.data?.content?.dataType === "moveObject"){
                 const fields = escrow.data.content.fields as {
